@@ -878,8 +878,13 @@ public class EdnParser {
     while (!isEOF) {
       Object o = readObjectSafe(throwOnEOF);
 
-      if (o instanceof UnexpectedCharacter && ((UnexpectedCharacter) o).ch == '}') {
-        return (PersistentHashSet) acc.persistent();
+      if (o instanceof UnexpectedCharacter) {
+        if (((UnexpectedCharacter) o).ch == '}') {
+          return (PersistentHashSet) acc.persistent();
+        } else {
+          //throw new RuntimeException("Unexpected character: " + ((char) ch) + context())
+          throw new RuntimeException("Unexpected character: ");
+        }
       } else {
         acc = (ATransientSet) acc.conj(o);
         if (count + 1 != acc.count()) {
@@ -1047,14 +1052,13 @@ public class EdnParser {
 
         case '-': {
           int ch2 = read();
+          unread();
 
           if (-1 == ch2 || isBoundary(ch2)) {
             return Symbol.intern(null, "-");
           } else if ('0' <= ch2 && ch2 <= '9') {
-            unread();
             return readNumberNegative();
           } else {
-            unread();
             return continueReadingSymbol('-');
           }
         }
@@ -1069,14 +1073,13 @@ public class EdnParser {
 
         case '+': {
           int ch2 = read();
+          unread();
 
           if (-1 == ch2 || isBoundary(ch2)) {
             return Symbol.intern(null, "+");
           } else if ('0' <= ch2 && ch2 <= '9') {
-            unread();
             return readNumber();
           } else {
-            unread();
             return continueReadingSymbol('+');
           }
         }

@@ -619,3 +619,4 @@
          (edn/read-string "#{:a 1 ;comment\n}")))
   (is (= {:a 1}
          (edn/read-string "{:a 1 ;comment\n}"))))
+

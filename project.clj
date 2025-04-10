@@ -5,7 +5,10 @@
   :dependencies
   [[org.clojure/clojure "1.12.0"]]
   :java-source-paths ["src"]
+  :test-paths ["test"]
   :javac-options ["--release" "8" "-Xlint:-options"]
+  :profiles {:dev {:dependencies [[org.clojure/test.check "1.1.1"]
+                                  [com.gfredericks/test.chuck "0.2.14"]]}}
   :deploy-repositories
   {"clojars"
    {:url "https://clojars.org/repo"
