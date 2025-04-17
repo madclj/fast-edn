@@ -950,8 +950,14 @@ public class EdnParser {
         }
 
         Object val = readObjectSafe(throwOnEOF);
-        if (val instanceof UnexpectedCharacter && ((UnexpectedCharacter) val).ch == '}') {
-          throw new RuntimeException("Map literal must contain an even number of forms: " + toUnfinishedCollString(acc.persistent()) + ", " + key + context());
+        if (val instanceof UnexpectedCharacter) {
+          if (((UnexpectedCharacter) val).ch == '}') {
+            throw new RuntimeException("Map literal must contain an even number of forms: " + toUnfinishedCollString(acc.persistent()) + ", " + key + context());
+          } else {
+            //throw new RuntimeException("Unexpected character: " + ((char) ch) + context())
+            //FIXME improve error message
+            throw new RuntimeException("Unexpected character: ");
+          }
         }
 
         acc = (ATransientMap) acc.assoc(key, val);

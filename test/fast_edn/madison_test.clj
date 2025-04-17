@@ -108,6 +108,6 @@
   (edn/read-string "{) 2 ) 1}") ;; done
   (edn/read-string "{1 ) ) 2 ] 3 } 4}") ;;done
   (edn/read-string "{1 ) ) 2 ] 3 ] 4}") ;;done
-  (edn/read-string "{1 )}") ;;TODO
-  (edn/read-string "{2 ) 1 )}") ;TODO
+  (edn/read-string "{1 )}") ;;done
+  (edn/read-string "{2 ) 1 )}") ;done
   )
