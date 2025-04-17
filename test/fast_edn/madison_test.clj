@@ -73,7 +73,7 @@
                                        (catch Exception _ BLOWN-UP))]
                            (= left right)))]
     ; :seed 1744248800430
-    (quick-check 100 p
+    (quick-check 10000 p
                  ;:seed 1744249980402
                  ))
   )
@@ -110,4 +110,17 @@
   (edn/read-string "{1 ) ) 2 ] 3 ] 4}") ;;done
   (edn/read-string "{1 )}") ;;done
   (edn/read-string "{2 ) 1 )}") ;done
+
+  ;; TODO symbols starting with numbers should be invalid
+  ;; keywords starting with number are a documented diff, but same argument not
+  ;; as compelling for symbols.
+  (edn/read-string "A000/A0")
+  (edn/read-string "A000/0")
+  (clojure.edn/read-string "A000/A0")
+  (clojure.edn/read-string "A000/0")
+  (poison '#{A000/A0} 7)
+  (clojure.edn/read-string "#{A000/0}")
+  (edn/read-string "#{A000/0}")
+  (do :1a)
+  (clojure.edn/read-string ":1a")
   )
