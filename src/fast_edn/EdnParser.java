@@ -839,9 +839,7 @@ public class EdnParser {
           }
           return res;
         } else {
-          //throw new RuntimeException("Unexpected character: " + ((char) ch) + context())
-          //FIXME improve error message
-          throw new RuntimeException("Unexpected character: ");
+          throw new RuntimeException("Unmatched delimiter: "  + ((char) ((UnexpectedCharacter) o).ch));
         }
       } else {
         acc.add(o);
@@ -866,9 +864,7 @@ public class EdnParser {
         if (((UnexpectedCharacter) o).ch == ']') {
           return (PersistentVector) acc.persistent();
         } else {
-          //throw new RuntimeException("Unexpected character: " + ((char) ch) + context())
-          //FIXME improve error message
-          throw new RuntimeException("Unexpected character: ");
+          throw new RuntimeException("Unmatched delimiter: " + ((char) ((UnexpectedCharacter) o).ch));
         }
       } else {
         acc = acc.conj(o);
@@ -894,9 +890,7 @@ public class EdnParser {
         if (((UnexpectedCharacter) o).ch == '}') {
           return (PersistentHashSet) acc.persistent();
         } else {
-          //throw new RuntimeException("Unexpected character: " + ((char) ch) + context())
-          //FIXME improve error message
-          throw new RuntimeException("Unexpected character: ");
+          throw new RuntimeException("Unmatched delimiter: " + ((char) ((UnexpectedCharacter) o).ch));
         }
       } else {
         acc = (ATransientSet) acc.conj(o);
@@ -926,9 +920,7 @@ public class EdnParser {
         if (((UnexpectedCharacter) key).ch == '}') {
           return acc.persistent();
         } else {
-          //throw new RuntimeException("Unexpected character: " + ((char) ch) + context())
-          //FIXME improve error message
-          throw new RuntimeException("Unexpected character: ");
+          throw new RuntimeException("Unmatched delimiter: " + ((char) ((UnexpectedCharacter) key).ch));
         }
       } else {
         if (ns != null) {
@@ -954,9 +946,7 @@ public class EdnParser {
           if (((UnexpectedCharacter) val).ch == '}') {
             throw new RuntimeException("Map literal must contain an even number of forms: " + toUnfinishedCollString(acc.persistent()) + ", " + key + context());
           } else {
-            //throw new RuntimeException("Unexpected character: " + ((char) ch) + context())
-            //FIXME improve error message
-            throw new RuntimeException("Unexpected character: ");
+            throw new RuntimeException("Unmatched delimiter: " + ((char) ((UnexpectedCharacter) val).ch));
           }
         }
 

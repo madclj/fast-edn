@@ -100,13 +100,24 @@
 
   (poison '[()] 1)
   (edn/read-string "(1])") ;; done
+  ;; TODO write a property that tests 
+  ;; Joel Martin (instacheck) conaka
+  ;; idea: generate ..see #clojure-madison April 16th
+  (edn/read-string "(1')")
+  (edn/read-string "(1:)")
+  (edn/read-string "(1/)") ;;FIXME low severity, bad error message but suspicious...
+  (edn/read-string "1/") ;;FIXME  same ^^
+  (clojure.edn/read-string "(1/)")
+  (clojure.edn/read-string "1/")
+  (clojure.edn/read-string "(1])") ;; TODO <-- use this msg
   (edn/read-string "[)]") ;; done
-  (edn/read-string "{)}") ;; done
+  (edn/read-string "#{)}") ;; done
+  (edn/read-string "{)}") ;; TODO
+  (edn/read-string "{) )}") ;; done
   (edn/read-string "{) )}") ;; done
   (edn/read-string "{) 1}") ;; done
   (edn/read-string "{) 1 ) 2}") ;;done
   (edn/read-string "{) 2 ) 1}") ;; done
-  (edn/read-string "{1 ) ) 2 ] 3 } 4}") ;;done
   (edn/read-string "{1 ) ) 2 ] 3 ] 4}") ;;done
   (edn/read-string "{1 )}") ;;done
   (edn/read-string "{2 ) 1 )}") ;done
