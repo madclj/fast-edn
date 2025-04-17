@@ -585,12 +585,13 @@
     "1/-2"        -1/2
     "-1/-2"       1/2)
   
-  (are [s] (thrown? Exception (edn/read-string s))
-    "1/"
-    "/2"
-    "1.1/2"
-    "1/2.2"
-    "1/2/3"))
+  (are [s c m] (thrown-with-msg? c m (edn/read-string s))
+    "1/"    Exception #"" ;;FIXME
+    "(1/)"  Exception #"" ;;FIXME
+    "/2"    Exception #"Symbol's namespace can't be empty: /2"
+    "1.1/2" NumberFormatException #""
+    "1/2.2" Exception #"Denominator can't be java\.lang\.Double"
+    "1/2/3" Exception #"Denominator can't be clojure\.lang\.Ratio"))
   
 
 ;; not in spec
