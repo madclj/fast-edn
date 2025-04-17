@@ -831,12 +831,18 @@ public class EdnParser {
 
     while (!isEOF) {
       Object o = readObjectSafe(throwOnEOF);
-      if (o instanceof UnexpectedCharacter && ((UnexpectedCharacter) o).ch == ')') {
-        IPersistentList res = PersistentList.EMPTY;
-        for (ListIterator i = acc.listIterator(acc.size()); i.hasPrevious(); ) {
-          res = (IPersistentList) res.cons(i.previous());
+      if (o instanceof UnexpectedCharacter) {
+        if (((UnexpectedCharacter) o).ch == ')') {
+          IPersistentList res = PersistentList.EMPTY;
+          for (ListIterator i = acc.listIterator(acc.size()); i.hasPrevious(); ) {
+            res = (IPersistentList) res.cons(i.previous());
+          }
+          return res;
+        } else {
+          //throw new RuntimeException("Unexpected character: " + ((char) ch) + context())
+          //FIXME improve error message
+          throw new RuntimeException("Unexpected character: ");
         }
-        return res;
       } else {
         acc.add(o);
       }
@@ -856,8 +862,14 @@ public class EdnParser {
     while (!isEOF) {
       Object o = readObjectSafe(throwOnEOF);
 
-      if (o instanceof UnexpectedCharacter && ((UnexpectedCharacter) o).ch == ']') {
-        return (PersistentVector) acc.persistent();
+      if (o instanceof UnexpectedCharacter) {
+        if (((UnexpectedCharacter) o).ch == ']') {
+          return (PersistentVector) acc.persistent();
+        } else {
+          //throw new RuntimeException("Unexpected character: " + ((char) ch) + context())
+          //FIXME improve error message
+          throw new RuntimeException("Unexpected character: ");
+        }
       } else {
         acc = acc.conj(o);
       }
@@ -883,6 +895,7 @@ public class EdnParser {
           return (PersistentHashSet) acc.persistent();
         } else {
           //throw new RuntimeException("Unexpected character: " + ((char) ch) + context())
+          //FIXME improve error message
           throw new RuntimeException("Unexpected character: ");
         }
       } else {
@@ -913,6 +926,8 @@ public class EdnParser {
       if (key instanceof UnexpectedCharacter && ((UnexpectedCharacter) key).ch == '}') {
         return acc.persistent();
       } else {
+        // UnexpectedCharacter(X) where X != '}'
+        // #:a{b 1}
         if (ns != null) {
           if (key instanceof Keyword) {
             Keyword kw = (Keyword) key;

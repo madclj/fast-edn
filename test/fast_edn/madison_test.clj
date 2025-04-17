@@ -74,7 +74,8 @@
                            (= left right)))]
     ; :seed 1744248800430
     (quick-check 100 p
-                 :seed 1744249980402))
+                 ;:seed 1744249980402
+                 ))
   )
 
 (comment
@@ -96,4 +97,15 @@
   (edn/read-string "#{)}")
 
   (edn/read-string "[#{]]")
+
+  (poison '[()] 1)
+  (edn/read-string "(1])") ;; done
+  (edn/read-string "[)]") ;; done
+  (edn/read-string "{) 1}")
+  (edn/read-string "{) 1 ) 2}")
+  (edn/read-string "{) 2 ) 1}")
+  (edn/read-string "{2 ) 1 )}")
+  (edn/read-string "{1 ) ) 2 ] 3 } 4}")
+  (edn/read-string "{1 ) ) 2 ] 3 ] 4}")
+  (edn/read-string "{1 )}")
   )
