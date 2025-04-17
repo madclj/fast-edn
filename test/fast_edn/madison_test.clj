@@ -101,11 +101,13 @@
   (poison '[()] 1)
   (edn/read-string "(1])") ;; done
   (edn/read-string "[)]") ;; done
-  (edn/read-string "{) 1}")
-  (edn/read-string "{) 1 ) 2}")
-  (edn/read-string "{) 2 ) 1}")
-  (edn/read-string "{2 ) 1 )}")
-  (edn/read-string "{1 ) ) 2 ] 3 } 4}")
-  (edn/read-string "{1 ) ) 2 ] 3 ] 4}")
-  (edn/read-string "{1 )}")
+  (edn/read-string "{)}") ;; done
+  (edn/read-string "{) )}") ;; done
+  (edn/read-string "{) 1}") ;; done
+  (edn/read-string "{) 1 ) 2}") ;;done
+  (edn/read-string "{) 2 ) 1}") ;; done
+  (edn/read-string "{1 ) ) 2 ] 3 } 4}") ;;done
+  (edn/read-string "{1 ) ) 2 ] 3 ] 4}") ;;done
+  (edn/read-string "{1 )}") ;;TODO
+  (edn/read-string "{2 ) 1 )}") ;TODO
   )

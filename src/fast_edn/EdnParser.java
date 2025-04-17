@@ -922,12 +922,15 @@ public class EdnParser {
 
     while (!isEOF) {
       Object key = readObjectSafe(throwOnEOF);
-
-      if (key instanceof UnexpectedCharacter && ((UnexpectedCharacter) key).ch == '}') {
-        return acc.persistent();
+      if (key instanceof UnexpectedCharacter) {
+        if (((UnexpectedCharacter) key).ch == '}') {
+          return acc.persistent();
+        } else {
+          //throw new RuntimeException("Unexpected character: " + ((char) ch) + context())
+          //FIXME improve error message
+          throw new RuntimeException("Unexpected character: ");
+        }
       } else {
-        // UnexpectedCharacter(X) where X != '}'
-        // #:a{b 1}
         if (ns != null) {
           if (key instanceof Keyword) {
             Keyword kw = (Keyword) key;
