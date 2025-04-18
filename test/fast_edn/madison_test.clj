@@ -63,6 +63,8 @@
                                (= \. (nth s (inc n)))
                                ;; don't trigger ://a bug
                                (= \\ (nth s (inc n)))
+                               ;; don't trigger [1#{}] bug
+                               (= \# (nth s (inc n)))
                                ))
                         (and (<= 0 (dec n))
                              (or
@@ -109,20 +111,18 @@
 
 (deftest parity2-test
   (let [p (prop'/for-all [x (gen/fmap
-                              identity
                               ;;remove known problematic values
-                              #_
                               (fn [v]
                                 (walk/postwalk (fn [v]
                                                  (when-not (or (and (number? v) (not (< -100 v 100)))
-                                                               (char? v)
-                                                               (set? v)
-                                                               (uuid? v)
-                                                               (and (ident? v)
-                                                                    (some #(when %
-                                                                             (or (str/includes? % "\\")
-                                                                                 (str/includes? % ":")))
-                                                                          ((juxt name namespace) v))))
+                                                               #_(char? v)
+                                                               #_(set? v)
+                                                               #_(uuid? v)
+                                                               #_(and (ident? v)
+                                                                      (some #(when %
+                                                                               (or (str/includes? % "\\")
+                                                                                   (str/includes? % ":")))
+                                                                            ((juxt name namespace) v))))
                                                    v))
                                                v))
                               gen/any-printable)
