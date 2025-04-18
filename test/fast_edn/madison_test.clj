@@ -171,14 +171,16 @@
 (deftest parse-substring-parity
   (let [p (prop'/for-all [s (gen/fmap
                               (fn [v]
-                                (-> v
-                                    (str/replace "^" "")
-                                    (str/replace ";" "")
-                                    (str/replace "#" " #")
-                                    (str/replace "\"" " \"")
-                                    (str/replace "//" "")
-                                    ))
-                              gen/string-ascii)
+                                (let [s (-> v
+                                            (str/replace "^" "")
+                                            (str/replace ";" "")
+                                            (str/replace "#" " #")
+                                            (str/replace "\"" " \"")
+                                            (str/replace "//" "")
+                                            (str/replace ":/" "")
+                                            )]
+                                  (str "[" s " " s "]")))
+                              (gen/fmap clojure.string/join (gen/vector gen/char-ascii 3 7)))
                           fast-edn (gen/return
                                      (try
                                        (fast-edn.core/read-string s)
@@ -382,4 +384,12 @@
 ;; https://github.com/tonsky/fast-edn/issues/24
 (fast-edn.core/read-string ":/!/!")
 (clojure.edn/read-string ":/!/!")
+
+;; https://github.com/tonsky/fast-edn/issues/25
+(fast-edn.core/read-string "10R08")
+(clojure.edn/read-string "10R08")
+
+;; https://github.com/tonsky/fast-edn/issues/26
+(fast-edn.core/read-string "25RN")
+(clojure.edn/read-string "25RN")
   )
