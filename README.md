@@ -171,7 +171,8 @@ In Fast EDN, ratios can be specified with arbitrary integers:
 ; => 255/2
 ```
 
-Symbols/keywords can have slashes anywhere, first slash is ns separator. Clojure allows them _almost_ anywhere but rules for when it doesn’t are _weird_:
+Symbols/keywords can have slashes anywhere, first slash is ns separator. Clojure allows them _almost_ anywhere but rules for
+when it doesn’t are _weird_:
 
 ```clojure
 (clojure.edn/read-string ":ns/sym/")
@@ -181,7 +182,7 @@ Symbols/keywords can have slashes anywhere, first slash is ns separator. Clojure
 ; => :ns/sym/
 ```
 
-Same goes for keywords starting with a number. Clojure allows `:1a` but not `:ns/1a` and it seems like an oversight rather than a deliberate design decision:
+Same goes for keywords and symbols starting with a number. Clojure allows `:1a` but not `:ns/1a` and it seems like an oversight rather than a deliberate design decision:
 
 ```clojure
 (clojure.edn/read-string ":ns/1a")
