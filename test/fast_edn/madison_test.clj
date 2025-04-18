@@ -53,7 +53,7 @@
     (if (or ;(str/includes? s "/") ;; <- HUGE hammer
             ;(str/includes? s "@")
             ;(str/includes? s "`")
-            ;(str/includes? s "~")
+            (str/includes? s "^")
             )
       s
       (case replace-with
@@ -109,7 +109,9 @@
 
 (deftest parity2-test
   (let [p (prop'/for-all [x (gen/fmap
+                              identity
                               ;;remove known problematic values
+                              #_
                               (fn [v]
                                 (walk/postwalk (fn [v]
                                                  (when-not (or (and (number? v) (not (< -100 v 100)))
@@ -316,4 +318,8 @@
 ;; https://github.com/tonsky/fast-edn/issues/20
 (fast-edn.core/read-string "$^")
 (clojure.edn/read-string "$^")
+
+;; https://github.com/tonsky/fast-edn/issues/21
+(fast-edn.core/read-string "1000000000000000000000000,")
+(clojure.edn/read-string "1000000000000000000000000,")
   )
