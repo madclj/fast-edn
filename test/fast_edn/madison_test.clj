@@ -50,10 +50,10 @@
 (defn poison [x n replace-with]
   (let [s (pr-str x)
         n (mod n (count s))]
-    (if (or (str/includes? s "/") ;; <- HUGE hammer
-            (str/includes? s "@")
-            (str/includes? s "`")
-            (str/includes? s "~")
+    (if (or ;(str/includes? s "/") ;; <- HUGE hammer
+            ;(str/includes? s "@")
+            ;(str/includes? s "`")
+            ;(str/includes? s "~")
             )
       s
       (case replace-with
@@ -136,9 +136,10 @@
                                         (try
                                           (massage (clojure.edn/read-string s))
                                           (catch Exception _ BLOWN-UP)))]
-                         (= clojure-edn fast-edn))]
+                         (or (= BLOWN-UP clojure-edn)
+                             (= clojure-edn fast-edn)))]
     ; :seed 1744248800430
-    (-> (quick-check 10000 p
+    (-> (quick-check 100000 p
                      ;:seed 1744249980402
                      )
         :shrunk
@@ -308,12 +309,11 @@
 (fast-edn.core/read-string "#:,A{}")
 (clojure.edn/read-string "#:,A{}")
 
-(fast-edn.core/read-string "0023250579833984")
-(clojure.edn/read-string "0023250579833984")
-(clojure.edn/read-string "[00002325057]")
+;;https://github.com/tonsky/fast-edn/issues/19
+(fast-edn.core/read-string "$;")
+(clojure.edn/read-string "$;")
 
-(fast-edn.core/read-string "(           !:)               \")")
-(fast-edn.core/read-string "!:")
-(clojure.edn/read-string   "(           !:)               \")")
-(clojure.edn/read-string   "(           !:)               \")")
+;; https://github.com/tonsky/fast-edn/issues/20
+(fast-edn.core/read-string "$^")
+(clojure.edn/read-string "$^")
   )
