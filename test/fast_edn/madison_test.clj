@@ -110,23 +110,37 @@
 (defn BAD-ERROR [])
 
 (deftest parity2-test
-  (let [p (prop'/for-all [x (gen/fmap
-                              ;;remove known problematic values
-                              (fn [v]
-                                (walk/postwalk (fn [v]
-                                                 (when-not (or (and (number? v) (not (< -100 v 100)))
-                                                               #_(char? v)
-                                                               #_(set? v)
-                                                               #_(uuid? v)
-                                                               #_(and (ident? v)
-                                                                      (some #(when %
-                                                                               (or (str/includes? % "\\")
-                                                                                   (str/includes? % ":")))
-                                                                            ((juxt name namespace) v))))
-                                                   v))
-                                               v))
-                              gen/any-printable)
-                          n gen/nat
+  (let [p (prop'/for-all [x
+                          (gen/one-of
+                            [#_gen/symbol-ns
+                             #_gen/keyword-ns
+                             #_gen/int
+                             #_gen/char-ascii
+                             (gen/fmap
+                                 (fn [v]
+                                   (-> v
+                                       (str/replace "^" "a")
+                                       (str/replace ";" "a")
+                                       (str/replace "#" "a")
+                                       ))
+                                 gen/string-ascii)
+                             #_(gen/fmap
+                                 ;;remove known problematic values
+                                 (fn [v]
+                                   (walk/postwalk (fn [v]
+                                                    (when-not (or (and (number? v) (not (< -1000000 v 1000000)))
+                                                                  #_(char? v)
+                                                                  #_(set? v)
+                                                                  #_(uuid? v)
+                                                                  #_(and (ident? v)
+                                                                         (some #(when %
+                                                                                  (or (str/includes? % "\\")
+                                                                                      (str/includes? % ":")))
+                                                                               ((juxt name namespace) v))))
+                                                      v))
+                                                  v))
+                                 gen/any-printable)])
+                          n (gen/return 0) #_gen/nat
                           replace-with (gen/elements [:delete :comma :space])
                           s (gen/return (poison x n replace-with))
                           fast-edn (gen/return
@@ -141,7 +155,7 @@
                          (or (= BLOWN-UP clojure-edn)
                              (= clojure-edn fast-edn)))]
     ; :seed 1744248800430
-    (-> (quick-check 100000 p
+    (-> (quick-check 100000000 p
                      ;:seed 1744249980402
                      )
         :shrunk
@@ -322,4 +336,7 @@
 ;; https://github.com/tonsky/fast-edn/issues/21
 (fast-edn.core/read-string "1000000000000000000000000,")
 (clojure.edn/read-string "1000000000000000000000000,")
+
+;; https://github.com/tonsky/fast-edn/issues/22
+(fast-edn.core/read-string "010\"")
   )
