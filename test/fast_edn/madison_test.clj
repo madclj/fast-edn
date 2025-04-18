@@ -122,6 +122,7 @@
                                        (str/replace "^" "a")
                                        (str/replace ";" "a")
                                        (str/replace "#" "a")
+                                       (str/replace "\"" "a")
                                        ))
                                  gen/string-ascii)
                              #_(gen/fmap
@@ -142,7 +143,10 @@
                                  gen/any-printable)])
                           n (gen/return 0) #_gen/nat
                           replace-with (gen/elements [:delete :comma :space])
-                          s (gen/return (poison x n replace-with))
+                          s (gen/return (let [s (poison x n replace-with)]
+                                          (if (seq s)
+                                            (subs s 0 (dec (count s)))
+                                            s)))
                           fast-edn (gen/return
                                      (try
                                        (massage (fast-edn.core/read-string s))
@@ -158,6 +162,37 @@
     (-> (quick-check 100000000 p
                      ;:seed 1744249980402
                      )
+        :shrunk
+        :smallest
+        first
+        ))
+  )
+
+(deftest parse-substring-parity
+  (let [p (prop'/for-all [s (gen/fmap
+                              (fn [v]
+                                (-> v
+                                    (str/replace "^" "")
+                                    (str/replace ";" "")
+                                    (str/replace "#" " #")
+                                    (str/replace "\"" " \"")
+                                    (str/replace "//" "")
+                                    ))
+                              gen/string-ascii)
+                          fast-edn (gen/return
+                                     (try
+                                       (fast-edn.core/read-string s)
+                                       (catch ArrayIndexOutOfBoundsException _ BAD-ERROR)
+                                       (catch Exception _ BLOWN-UP)))
+                          clojure-edn (gen/return
+                                        (try
+                                          (clojure.edn/read-string s)
+                                          (catch Exception _ BLOWN-UP)))]
+                         (do
+                           (assert (not (Thread/interrupted)))
+                           (or (not (= BLOWN-UP fast-edn))
+                               (= BLOWN-UP clojure-edn))))]
+    (-> (quick-check 100000000 p)
         :shrunk
         :smallest
         first
@@ -339,4 +374,12 @@
 
 ;; https://github.com/tonsky/fast-edn/issues/22
 (fast-edn.core/read-string "010\"")
+
+;;https://github.com/tonsky/fast-edn/issues/23
+(fast-edn.core/read-string "\\ ^")
+(clojure.edn/read-string "\\ ^")
+
+;; https://github.com/tonsky/fast-edn/issues/24
+(fast-edn.core/read-string ":/!/!")
+(clojure.edn/read-string ":/!/!")
   )
