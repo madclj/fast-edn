@@ -178,13 +178,14 @@
                                             (str/replace "\"" " \"")
                                             (str/replace "//" "")
                                             (str/replace ":/" "")
+                                            (str/replace "r0" "r1")
+                                            (str/replace "R0" "R1")
                                             )]
                                   (str "[" s " " s "]")))
                               (gen/fmap clojure.string/join (gen/vector gen/char-ascii 3 7)))
                           fast-edn (gen/return
                                      (try
                                        (fast-edn.core/read-string s)
-                                       (catch ArrayIndexOutOfBoundsException _ BAD-ERROR)
                                        (catch Exception _ BLOWN-UP)))
                           clojure-edn (gen/return
                                         (try
@@ -392,4 +393,8 @@
 ;; https://github.com/tonsky/fast-edn/issues/26
 (fast-edn.core/read-string "25RN")
 (clojure.edn/read-string "25RN")
+
+;;https://github.com/tonsky/fast-edn/issues/27
+(fast-edn.core/read-string "08/1")
+(clojure.edn/read-string "08/1")
   )
